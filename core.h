@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
+
 // Wrapper for std::vector<string>
 typedef struct CStrings {
     const char** strs;
@@ -563,6 +565,18 @@ int GetNumThreads();
 struct RotatedRect RotatedRect_Create(struct Point2f center, int width, int height, float angle);
 struct RotatedRect2f RotatedRect2f_Create(struct Point2f center, float width, float height, float angle);
 
+typedef struct AscendMat {
+    void* mat;
+} AscendMat;
+
+AscendMat AscendMat_New();
+AscendMat AscendMat_NewWithSize(int rows, int cols, int type);
+void AscendMat_Upload(AscendMat dst, Mat src);
+void AscendMat_Download(AscendMat src, Mat dst);
+void AscendMat_Add(AscendMat src1, AscendMat src2, AscendMat dst);
+void AscendMat_Rotate(AscendMat src, AscendMat dst, int rotateCode);
+void AscendMat_Flip(AscendMat src, AscendMat dst, int flipCode);
+void AscendMat_Close(AscendMat mat);
 
 #ifdef __cplusplus
 }

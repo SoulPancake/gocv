@@ -1,5 +1,9 @@
 #include "core.h"
 #include <string.h>
+#include <opencv2/core.hpp>
+#include <opencv2/core/ascend.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/cann.hpp>
 
 // Mat_New creates a new empty Mat
 Mat Mat_New() {
@@ -1296,4 +1300,47 @@ struct RotatedRect2f RotatedRect2f_Create(struct Point2f center, float width, fl
 
     RotatedRect2f retrect = {(Contour2f){rpts, 4}, r, centrpt, szsz, cvrect.angle};
     return retrect;
+}
+
+AscendMat AscendMat_New() {
+    return AscendMat{new cv::cann::AscendMat()};
+}
+
+AscendMat AscendMat_NewWithSize(int rows, int cols, int type) {
+    return AscendMat{new cv::cann::AscendMat(rows, cols, type)};
+}
+
+void AscendMat_Upload(AscendMat dst, Mat src) {
+    cv::cann::AscendMat* d = static_cast<cv::cann::AscendMat*>(dst.mat);
+    cv::Mat* s = static_cast<cv::Mat*>(src.mat);
+    d->upload(*s);
+}
+
+void AscendMat_Download(AscendMat src, Mat dst) {
+    cv::cann::AscendMat* s = static_cast<cv::cann::AscendMat*>(src.mat);
+    cv::Mat* d = static_cast<cv::Mat*>(dst.mat);
+    s->download(*d);
+}
+
+void AscendMat_Add(AscendMat src1, AscendMat src2, AscendMat dst) {
+    cv::cann::AscendMat* s1 = static_cast<cv::cann::AscendMat*>(src1.mat);
+    cv::cann::AscendMat* s2 = static_cast<cv::cann::AscendMat*>(src2.mat);
+    cv::cann::AscendMat* d = static_cast<cv::cann::AscendMat*>(dst.mat);
+    cv::cann::add(*s1, *s2, *d);
+}
+
+void AscendMat_Rotate(AscendMat src, AscendMat dst, int rotateCode) {
+    cv::cann::AscendMat* s = static_cast<cv::cann::AscendMat*>(src.mat);
+    cv::cann::AscendMat* d = static_cast<cv::cann::AscendMat*>(dst.mat);
+    cv::cann::rotate(*s, *d, rotateCode);
+}
+
+void AscendMat_Flip(AscendMat src, AscendMat dst, int flipCode) {
+    cv::cann::AscendMat* s = static_cast<cv::cann::AscendMat*>(src.mat);
+    cv::cann::AscendMat* d = static_cast<cv::cann::AscendMat*>(dst.mat);
+    cv::cann::flip(*s, *d, flipCode);
+}
+
+void AscendMat_Close(AscendMat mat) {
+    delete static_cast<cv::cann::AscendMat*>(mat.mat);
 }

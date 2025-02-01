@@ -3451,3 +3451,133 @@ func TestNewMatFromPoint2fVector(t *testing.T) {
 	}
 
 }
+
+func TestNewAscendMat(t *testing.T) {
+	am := NewAscendMat()
+	defer am.Close()
+
+	if am.p == nil {
+		t.Error("Expected non-nil AscendMat, got nil")
+	}
+}
+
+func TestNewAscendMatWithSize(t *testing.T) {
+	rows, cols := 10, 10
+	am := NewAscendMatWithSize(rows, cols, MatTypeCV8U)
+	defer am.Close()
+
+	if am.p == nil {
+		t.Error("Expected non-nil AscendMat, got nil")
+	}
+}
+
+func TestAscendMat_UploadDownload(t *testing.T) {
+	src := NewMatWithSize(5, 5, MatTypeCV8U)
+	defer src.Close()
+
+	// Fill source Mat with test data
+	for r := 0; r < 5; r++ {
+		for c := 0; c < 5; c++ {
+			src.SetUCharAt(r, c, 100)
+		}
+	}
+
+	am := NewAscendMatWithSize(5, 5, MatTypeCV8U)
+	defer am.Close()
+
+	// Upload data from Mat to AscendMat
+	am.Upload(src)
+
+	dst := NewMat()
+	defer dst.Close()
+
+	// Download data back to Mat
+	am.Download(&dst)
+
+	for r := 0; r < 5; r++ {
+		for c := 0; c < 5; c++ {
+			if dst.GetUCharAt(r, c) != 100 {
+				t.Errorf("Expected value 100 at (%d, %d), got %d", r, c, dst.GetUCharAt(r, c))
+			}
+		}
+	}
+}
+
+func TestAscendMat_Add(t *testing.T) {
+	src1 := NewMatWithSizeFromScalar(NewScalar(50, 0, 0, 0), 3, 3, MatTypeCV8U)
+	src2 := NewMatWithSizeFromScalar(NewScalar(30, 0, 0, 0), 3, 3, MatTypeCV8U)
+	defer src1.Close()
+	defer src2.Close()
+
+	am1 := NewAscendMatWithSize(3, 3, MatTypeCV8U)
+	am2 := NewAscendMatWithSize(3, 3, MatTypeCV8U)
+	dst := NewAscendMatWithSize(3, 3, MatTypeCV8U)
+	defer am1.Close()
+	defer am2.Close()
+	defer dst.Close()
+
+	am1.Upload(src1)
+	am2.Upload(src2)
+
+	dst.Add(am1, am2, &dst)
+
+	result := NewMat()
+	defer result.Close()
+	dst.Download(&result)
+
+	for r := 0; r < 3; r++ {
+		for c := 0; c < 3; c++ {
+			if result.GetUCharAt(r, c) != 80 {
+				t.Errorf("Expected value 80 at (%d, %d), got %d", r, c, result.GetUCharAt(r, c))
+			}
+		}
+	}
+}
+
+func TestAscendMat_Rotate(t *testing.T) {
+	src := NewMatWithSizeFromScalar(NewScalar(255, 0, 0, 0), 3, 3, MatTypeCV8U)
+	defer src.Close()
+
+	am := NewAscendMatWithSize(3, 3, MatTypeCV8U)
+	defer am.Close()
+
+	am.Upload(src)
+
+	dst := NewAscendMatWithSize(3, 3, MatTypeCV8U)
+	defer dst.Close()
+
+	// Rotate by 90 degrees
+	am.Rotate(&dst, Rotate90Clockwise)
+
+	result := NewMat()
+	defer result.Close()
+	dst.Download(&result)
+
+	if result.Empty() {
+		t.Error("Expected non-empty Mat after rotation")
+	}
+}
+
+func TestAscendMat_Flip(t *testing.T) {
+	src := NewMatWithSizeFromScalar(NewScalar(200, 0, 0, 0), 3, 3, MatTypeCV8U)
+	defer src.Close()
+
+	am := NewAscendMatWithSize(3, 3, MatTypeCV8U)
+	defer am.Close()
+
+	am.Upload(src)
+
+	dst := NewAscendMatWithSize(3, 3, MatTypeCV8U)
+	defer dst.Close()
+
+	// Flip along the horizontal axis
+	am.Flip(&dst, 0)
+
+	result := NewMat()
+	defer result.Close()
+	dst.Download(&result)
+
+	if result.Empty() {
+		t.Error("Expected non-empty Mat after flip")
+	}
+}

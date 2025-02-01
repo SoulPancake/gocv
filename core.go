@@ -2944,3 +2944,54 @@ func NewRotatedRect2f(center Point2f, width float32, height float32, angle float
 		Angle:        float64(c_rotRect2f.angle),
 	}
 }
+
+type AscendMat struct {
+	p C.AscendMat
+	d []byte
+}
+
+// NewAscendMat returns a new empty AscendMat.
+func NewAscendMat() AscendMat {
+	return newAscendMat(C.AscendMat_New())
+}
+
+// NewAscendMatWithSize returns a new AscendMat with a specific size and type.
+func NewAscendMatWithSize(rows int, cols int, mt MatType) AscendMat {
+	return newAscendMat(C.AscendMat_NewWithSize(C.int(rows), C.int(cols), C.int(mt)))
+}
+
+// Helper function to wrap the C.AscendMat
+func newAscendMat(cAscendMat C.AscendMat) AscendMat {
+	return AscendMat{p: cAscendMat}
+}
+
+// Upload copies data from a Mat to the AscendMat.
+func (am *AscendMat) Upload(src Mat) {
+	C.AscendMat_Upload(am.p, src.p)
+}
+
+// Download copies data from the AscendMat to a Mat.
+func (am *AscendMat) Download(dst *Mat) {
+	C.AscendMat_Download(am.p, dst.p)
+}
+
+// Add performs element-wise addition of two AscendMats.
+func (am *AscendMat) Add(src1, src2 AscendMat, dst *AscendMat) {
+	C.AscendMat_Add(src1.p, src2.p, dst.p)
+}
+
+// Rotate rotates the AscendMat by 90, 180, or 270 degrees clockwise.
+func (am *AscendMat) Rotate(dst *AscendMat, rotateCode int) {
+	C.AscendMat_Rotate(am.p, dst.p, C.int(rotateCode))
+}
+
+// Flip flips the AscendMat around vertical, horizontal, or both axes.
+func (am *AscendMat) Flip(dst *AscendMat, flipCode int) {
+	C.AscendMat_Flip(am.p, dst.p, C.int(flipCode))
+}
+
+// Close releases the AscendMat's resources.
+func (am *AscendMat) Close() {
+	C.AscendMat_Close(am.p)
+	am.p = nil
+}
