@@ -47,6 +47,13 @@ func NewAKAZE() AKAZE {
 	return AKAZE{p: unsafe.Pointer(C.AKAZE_Create())}
 }
 
+// NewAKAZEWithParams creates a new AKAZE detector with custom parameters.
+func NewAKAZEWithParams(descriptorType, descriptorSize, descriptorChannels int, threshold float32, nOctaves, nOctaveLayers, diffusivity int) AKAZE {
+	return AKAZE{p: C.AKAZE_CreateWithParams(
+		C.int(descriptorType), C.int(descriptorSize), C.int(descriptorChannels),
+		C.float(threshold), C.int(nOctaves), C.int(nOctaveLayers), C.int(diffusivity))}
+}
+
 // Close AKAZE.
 func (a *AKAZE) Close() error {
 	C.AKAZE_Close((C.AKAZE)(a.p))
@@ -116,6 +123,15 @@ type AgastFeatureDetector struct {
 // https://docs.opencv.org/master/d7/d19/classcv_1_1AgastFeatureDetector.html
 func NewAgastFeatureDetector() AgastFeatureDetector {
 	return AgastFeatureDetector{p: unsafe.Pointer(C.AgastFeatureDetector_Create())}
+}
+
+// NewAgastFeatureDetectorWithParams creates a new AGAST feature detector with custom parameters.
+func NewAgastFeatureDetectorWithParams(threshold int, nonmaxSuppression bool, detectorType int) AgastFeatureDetector {
+	return AgastFeatureDetector{
+		p: unsafe.Pointer(C.AgastFeatureDetector_CreateWithParams(
+			C.int(threshold), C.bool(nonmaxSuppression), C.int(detectorType),
+		)),
+	}
 }
 
 // Close AgastFeatureDetector.

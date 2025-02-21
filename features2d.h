@@ -37,12 +37,15 @@ typedef void* SIFT;
 #endif
 
 AKAZE AKAZE_Create();
+AKAZE AKAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels,
+                             float threshold, int nOctaves, int nOctaveLayers, int diffusivity);
 void AKAZE_Close(AKAZE a);
 struct KeyPoints AKAZE_Detect(AKAZE a, Mat src);
 struct KeyPoints AKAZE_Compute(AKAZE a, Mat src, struct KeyPoints kp, Mat desc);
 struct KeyPoints AKAZE_DetectAndCompute(AKAZE a, Mat src, Mat mask, Mat desc);
 
 AgastFeatureDetector AgastFeatureDetector_Create();
+AgastFeatureDetector AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type);
 void AgastFeatureDetector_Close(AgastFeatureDetector a);
 struct KeyPoints AgastFeatureDetector_Detect(AgastFeatureDetector a, Mat src);
 

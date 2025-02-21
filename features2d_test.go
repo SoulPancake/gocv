@@ -46,6 +46,47 @@ func TestAKAZE(t *testing.T) {
 	}
 }
 
+func TestAKAZEWithParams(t *testing.T) {
+	img := IMRead("images/face.jpg", IMReadColor)
+	if img.Empty() {
+		t.Error("Invalid Mat in AKAZE test")
+	}
+	defer img.Close()
+
+	dst := NewMat()
+	defer dst.Close()
+
+	ak := NewAKAZEWithParams(3, 0, 3, 0.001, 4, 4, 1)
+	defer ak.Close()
+
+	// Test Detect method
+	kp := ak.Detect(img)
+	if len(kp) < 512 {
+		t.Errorf("Invalid KeyPoint array in AKAZE test: %d", len(kp))
+	}
+
+	mask := NewMat()
+	defer mask.Close()
+
+	kpc, desc := ak.Compute(img, mask, kp)
+	defer desc.Close()
+	if len(kpc) < 512 {
+		t.Errorf("Invalid KeyPoint array in AKAZE Compute: %d", len(kpc))
+	}
+	if desc.Empty() {
+		t.Error("Invalid Mat desc in AKAZE Compute")
+	}
+
+	kpdc, desc2 := ak.DetectAndCompute(img, mask)
+	defer desc2.Close()
+	if len(kpdc) < 512 {
+		t.Errorf("Invalid KeyPoint array in AKAZE DetectAndCompute: %d", len(kpdc))
+	}
+	if desc2.Empty() {
+		t.Error("Invalid Mat desc in AKAZE DetectAndCompute")
+	}
+}
+
 func TestAgastFeatureDetector(t *testing.T) {
 	img := IMRead("images/face.jpg", IMReadColor)
 	if img.Empty() {
@@ -57,6 +98,25 @@ func TestAgastFeatureDetector(t *testing.T) {
 	defer dst.Close()
 
 	ad := NewAgastFeatureDetector()
+	defer ad.Close()
+
+	kp := ad.Detect(img)
+	if len(kp) < 2800 {
+		t.Errorf("Invalid KeyPoint array in AgastFeatureDetector test: %d", len(kp))
+	}
+}
+
+func TestAgastFeatureDetectorWithParams(t *testing.T) {
+	img := IMRead("images/face.jpg", IMReadColor)
+	if img.Empty() {
+		t.Error("Invalid Mat in AgastFeatureDetector test")
+	}
+	defer img.Close()
+
+	dst := NewMat()
+	defer dst.Close()
+
+	ad := NewAgastFeatureDetectorWithParams(10, true, 0)
 	defer ad.Close()
 
 	kp := ad.Detect(img)

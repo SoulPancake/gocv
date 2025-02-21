@@ -1,8 +1,13 @@
 #include "features2d.h"
 
 AKAZE AKAZE_Create() {
-    // TODO: params
     return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create());
+}
+
+AKAZE AKAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels,
+                             float threshold, int nOctaves, int nOctaveLayers, int diffusivity) {
+    return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create(descriptor_type, descriptor_size, descriptor_channels,
+                                                     threshold, nOctaves, nOctaveLayers, diffusivity));
 }
 
 void AKAZE_Close(AKAZE a) {
@@ -68,8 +73,11 @@ struct KeyPoints AKAZE_DetectAndCompute(AKAZE a, Mat src, Mat mask, Mat desc) {
 }
 
 AgastFeatureDetector AgastFeatureDetector_Create() {
-    // TODO: params
     return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create());
+}
+
+AgastFeatureDetector AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type) {
+    return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, type));
 }
 
 void AgastFeatureDetector_Close(AgastFeatureDetector a) {
