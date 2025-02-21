@@ -163,7 +163,7 @@ var _ Feature2D = (*BRISK)(nil)
 // NewBRISK returns a new BRISK algorithm
 //
 // For further details, please see:
-// https://docs.opencv.org/master/d8/d30/classcv_1_1AKAZE.html
+// https://docs.opencv.org/4.x/de/dbf/classcv_1_1BRISK.html
 func NewBRISK() BRISK {
 	return BRISK{p: unsafe.Pointer(C.BRISK_Create())}
 }
@@ -294,12 +294,38 @@ type GFTTDetector struct {
 	p unsafe.Pointer
 }
 
+// GFTTDetectorParams holds parameters to create a GFTTDetector
+type GFTTDetectorParams struct {
+	MaxCorners        int
+	QualityLevel      float64
+	MinDistance       float64
+	BlockSize         int
+	UseHarrisDetector bool
+	K                 float64
+}
+
 // NewGFTTDetector returns a new GFTTDetector algorithm
 //
 // For further details, please see:
 // https://docs.opencv.org/master/df/d21/classcv_1_1GFTTDetector.html
 func NewGFTTDetector() GFTTDetector {
 	return GFTTDetector{p: unsafe.Pointer(C.GFTTDetector_Create())}
+}
+
+// NewGFTTDetectorWithParams returns a new GFTTDetector algorithm with custom parameters
+//
+// For further details, please see:
+// https://docs.opencv.org/master/df/d21/classcv_1_1GFTTDetector.html
+func NewGFTTDetectorWithParams(params GFTTDetectorParams) GFTTDetector {
+	cParams := C.GFTTDetectorParams{
+		maxCorners:        C.int(params.MaxCorners),
+		qualityLevel:      C.double(params.QualityLevel),
+		minDistance:       C.double(params.MinDistance),
+		blockSize:         C.int(params.BlockSize),
+		useHarrisDetector: C.bool(params.UseHarrisDetector),
+		k:                 C.double(params.K),
+	}
+	return GFTTDetector{p: unsafe.Pointer(C.GFTTDetector_Create_WithParams(cParams))}
 }
 
 // Close GFTTDetector.

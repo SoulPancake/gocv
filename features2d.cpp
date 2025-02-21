@@ -171,9 +171,22 @@ struct KeyPoints BRISK_DetectAndCompute(BRISK b, Mat src, Mat mask, Mat desc) {
     return ret;
 }
 
+struct GFTTDetectorParams {
+    int maxCorners;
+    double qualityLevel;
+    double minDistance;
+    int blockSize;
+    bool useHarrisDetector;
+    double k;
+};
+
 GFTTDetector GFTTDetector_Create() {
-    // TODO: params
     return new cv::Ptr<cv::GFTTDetector>(cv::GFTTDetector::create());
+}
+
+GFTTDetector GFTTDetector_Create_WithParams(GFTTDetectorParams params) {
+    return cv::GFTTDetector::create(params.maxCorners, params.qualityLevel, params.minDistance,
+                                    params.blockSize, params.useHarrisDetector, params.k);
 }
 
 void GFTTDetector_Close(GFTTDetector a) {

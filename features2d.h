@@ -62,6 +62,7 @@ void FastFeatureDetector_Close(FastFeatureDetector f);
 struct KeyPoints FastFeatureDetector_Detect(FastFeatureDetector f, Mat src);
 
 GFTTDetector GFTTDetector_Create();
+GFTTDetector GFTTDetector_Create_WithParams(const struct GFTTDetectorParams& params);
 void GFTTDetector_Close(GFTTDetector a);
 struct KeyPoints GFTTDetector_Detect(GFTTDetector a, Mat src);
 

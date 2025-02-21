@@ -263,6 +263,35 @@ func TestGFTTDetector(t *testing.T) {
 	}
 }
 
+func TestGFTTDetectorWithParams(t *testing.T) {
+	img := IMRead("images/face.jpg", IMReadColor)
+	if img.Empty() {
+		t.Error("Invalid Mat in GFTTDetector test")
+	}
+	defer img.Close()
+
+	dst := NewMat()
+	defer dst.Close()
+
+	params := GFTTDetectorParams{
+		MaxCorners:        500,
+		QualityLevel:      0.01,
+		MinDistance:       10,
+		BlockSize:         3,
+		UseHarrisDetector: false,
+		K:                 0.04,
+	}
+
+	gft := NewGFTTDetectorWithParams(params)
+	defer gft.Close()
+
+	kp := gft.Detect(img)
+
+	if len(kp) < 512 {
+		t.Errorf("Invalid KeyPoint array in GFTTDetector test: %d", len(kp))
+	}
+}
+
 func TestKAZE(t *testing.T) {
 	img := IMRead("images/face.jpg", IMReadColor)
 	if img.Empty() {
