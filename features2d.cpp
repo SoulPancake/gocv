@@ -76,11 +76,11 @@ AgastFeatureDetector AgastFeatureDetector_Create() {
     return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create());
 }
 
-cv::Ptr<cv::AgastFeatureDetector> AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type) {
+AgastFeatureDetector AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type) {
     cv::AgastFeatureDetector::DetectorType detectorType = static_cast<cv::AgastFeatureDetector::DetectorType>(type);
-
-    return cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, detectorType);
+    return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, detectorType));
 }
+
 
 
 
