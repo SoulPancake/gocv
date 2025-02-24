@@ -75,7 +75,7 @@ struct KeyPoints KAZE_Compute(KAZE a, Mat src, struct KeyPoints kp, Mat desc);
 struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc);
 
 MSER MSER_Create();
-MSER MSER_Create(int delta, int min_area, int max_area, double max_variation, double min_diversity,
+MSER MSER_CreateWithParams(int delta, int min_area, int max_area, double max_variation, double min_diversity,
                  int max_evolution, double area_threshold, double min_margin, int edge_blur_size);
 void MSER_Close(MSER a);
 struct KeyPoints MSER_Detect(MSER a, Mat src);

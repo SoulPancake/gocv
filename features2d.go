@@ -460,7 +460,7 @@ func NewMSERWithParams(delta int, minArea int, maxArea int, maxVariation float64
 	cMinMargin := C.double(minMargin)
 	cEdgeBlurSize := C.int(edgeBlurSize)
 
-	return MSER{p: unsafe.Pointer(C.MSER_Create(cDelta, cMinArea, cMaxArea, cMaxVariation, cMinDiversity,
+	return MSER{p: unsafe.Pointer(C.MSER_CreateWithParams(cDelta, cMinArea, cMaxArea, cMaxVariation, cMinDiversity,
 		cMaxEvolution, cAreaThreshold, cMinMargin, cEdgeBlurSize))}
 }
 
