@@ -180,9 +180,11 @@ GFTTDetector GFTTDetector_Create() {
 }
 
 GFTTDetector GFTTDetector_Create_WithParams(const GFTTDetectorParams* params) {
-    return cv::GFTTDetector::create(params->maxCorners, params->qualityLevel, params->minDistance,
-                                    params->blockSize, params->useHarrisDetector, params->k);
+    // Create the GFTTDetector and return it wrapped in a smart pointer
+    return new cv::Ptr<cv::GFTTDetector>(cv::GFTTDetector::create(params->maxCorners, params->qualityLevel, params->minDistance,
+                                                                 params->blockSize, params->useHarrisDetector, params->k));
 }
+
 
 
 void GFTTDetector_Close(GFTTDetector a) {
