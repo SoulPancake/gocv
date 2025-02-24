@@ -36,6 +36,16 @@ typedef void* FlannBasedMatcher;
 typedef void* SIFT;
 #endif
 
+
+struct GFTTDetectorParams {
+    int maxCorners;
+    double qualityLevel;
+    double minDistance;
+    int blockSize;
+    bool useHarrisDetector;
+    double k;
+};
+
 AKAZE AKAZE_Create();
 AKAZE AKAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels,
                              float threshold, int nOctaves, int nOctaveLayers, int diffusivity);
