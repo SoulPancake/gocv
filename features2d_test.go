@@ -332,6 +332,50 @@ func TestKAZE(t *testing.T) {
 	}
 }
 
+func TestKAZEWithParams(t *testing.T) {
+	img := IMRead("images/face.jpg", IMReadColor)
+	if img.Empty() {
+		t.Error("Invalid Mat in KAZE test")
+	}
+	defer img.Close()
+
+	dst := NewMat()
+	defer dst.Close()
+
+	// Initialize KAZE with custom parameters
+	k := NewKAZEWithParams(0, 3, 3, 0.001, 4, 4, 1)
+	defer k.Close()
+
+	// Test Detect method
+	kp := k.Detect(img)
+	if len(kp) < 512 {
+		t.Errorf("Invalid KeyPoint array in KAZE test with params: %d", len(kp))
+	}
+
+	mask := NewMat()
+	defer mask.Close()
+
+	// Test Compute method
+	kpc, desc := k.Compute(img, mask, kp)
+	defer desc.Close()
+	if len(kpc) < 512 {
+		t.Errorf("Invalid KeyPoint array in KAZE Compute with params: %d", len(kpc))
+	}
+	if desc.Empty() {
+		t.Error("Invalid Mat desc in KAZE Compute with params")
+	}
+
+	// Test DetectAndCompute method
+	kpdc, desc2 := k.DetectAndCompute(img, mask)
+	defer desc2.Close()
+	if len(kpdc) < 512 {
+		t.Errorf("Invalid KeyPoint array in KAZE DetectAndCompute with params: %d", len(kpdc))
+	}
+	if desc2.Empty() {
+		t.Error("Invalid Mat desc in KAZE DetectAndCompute with params")
+	}
+}
+
 func TestMSER(t *testing.T) {
 	img := IMRead("images/face.jpg", IMReadColor)
 	if img.Empty() {

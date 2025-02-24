@@ -67,6 +67,8 @@ void GFTTDetector_Close(GFTTDetector a);
 struct KeyPoints GFTTDetector_Detect(GFTTDetector a, Mat src);
 
 KAZE KAZE_Create();
+KAZE KAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels,
+                                             float threshold, int nOctaves, int nOctaveLayers, int diffusivity);
 void KAZE_Close(KAZE a);
 struct KeyPoints KAZE_Detect(KAZE a, Mat src);
 struct KeyPoints KAZE_Compute(KAZE a, Mat src, struct KeyPoints kp, Mat desc);

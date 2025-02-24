@@ -363,6 +363,13 @@ func NewKAZE() KAZE {
 	return KAZE{p: unsafe.Pointer(C.KAZE_Create())}
 }
 
+// NewKAZEWithParams creates a new KAZE detector with custom parameters.
+func NewKAZEWithParams(descriptorType, descriptorSize, descriptorChannels int, threshold float32, nOctaves, nOctaveLayers, diffusivity int) KAZE {
+	return KAZE{p: unsafe.Pointer(C.KAZE_CreateWithParams(
+		C.int(descriptorType), C.int(descriptorSize), C.int(descriptorChannels),
+		C.float(threshold), C.int(nOctaves), C.int(nOctaveLayers), C.int(diffusivity)))}
+}
+
 // Close KAZE.
 func (a *KAZE) Close() error {
 	C.KAZE_Close((C.KAZE)(a.p))
