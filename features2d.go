@@ -49,9 +49,10 @@ func NewAKAZE() AKAZE {
 
 // NewAKAZEWithParams creates a new AKAZE detector with custom parameters.
 func NewAKAZEWithParams(descriptorType, descriptorSize, descriptorChannels int, threshold float32, nOctaves, nOctaveLayers, diffusivity int) AKAZE {
-	return AKAZE{p: C.AKAZE_CreateWithParams(
+	ptr := C.AKAZE_CreateWithParams(
 		C.int(descriptorType), C.int(descriptorSize), C.int(descriptorChannels),
-		C.float(threshold), C.int(nOctaves), C.int(nOctaveLayers), C.int(diffusivity))}
+		C.float(threshold), C.int(nOctaves), C.int(nOctaveLayers), C.int(diffusivity))
+	return AKAZE{p: unsafe.Pointer(ptr)}
 }
 
 // Close AKAZE.
