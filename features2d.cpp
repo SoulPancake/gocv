@@ -77,8 +77,12 @@ AgastFeatureDetector AgastFeatureDetector_Create() {
 }
 
 AgastFeatureDetector AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type) {
-    return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, type));
+    // Convert the int type to the appropriate enum value
+    cv::AgastFeatureDetector::DetectorType detectorType = static_cast<cv::AgastFeatureDetector::DetectorType>(type);
+
+    return cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, detectorType);
 }
+
 
 void AgastFeatureDetector_Close(AgastFeatureDetector a) {
     delete a;
@@ -179,6 +183,7 @@ GFTTDetector GFTTDetector_Create_WithParams(const GFTTDetectorParams* params) {
     return cv::GFTTDetector::create(params->maxCorners, params->qualityLevel, params->minDistance,
                                     params->blockSize, params->useHarrisDetector, params->k);
 }
+
 
 void GFTTDetector_Close(GFTTDetector a) {
     delete a;
