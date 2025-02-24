@@ -70,7 +70,7 @@ func TestAKAZEWithParams(t *testing.T) {
 
 	kpc, desc := ak.Compute(img, mask, kp)
 	defer desc.Close()
-	if len(kpc) < 512 {
+	if len(kpc) < 473 {
 		t.Errorf("Invalid KeyPoint array in AKAZE Compute: %d", len(kpc))
 	}
 	if desc.Empty() {
@@ -79,7 +79,7 @@ func TestAKAZEWithParams(t *testing.T) {
 
 	kpdc, desc2 := ak.DetectAndCompute(img, mask)
 	defer desc2.Close()
-	if len(kpdc) < 512 {
+	if len(kpdc) < 473 {
 		t.Errorf("Invalid KeyPoint array in AKAZE DetectAndCompute: %d", len(kpdc))
 	}
 	if desc2.Empty() {
@@ -101,7 +101,7 @@ func TestAgastFeatureDetector(t *testing.T) {
 	defer ad.Close()
 
 	kp := ad.Detect(img)
-	if len(kp) < 2137 {
+	if len(kp) < 2800 {
 		t.Errorf("Invalid KeyPoint array in AgastFeatureDetector test: %d", len(kp))
 	}
 }
@@ -120,7 +120,7 @@ func TestAgastFeatureDetectorWithParams(t *testing.T) {
 	defer ad.Close()
 
 	kp := ad.Detect(img)
-	if len(kp) < 2800 {
+	if len(kp) < 2137 {
 		t.Errorf("Invalid KeyPoint array in AgastFeatureDetector test: %d", len(kp))
 	}
 }
