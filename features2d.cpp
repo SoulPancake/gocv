@@ -3,12 +3,12 @@
 AKAZE AKAZE_Create() {
     return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create());
 }
+AKAZE AKAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels) {
+    cv::AKAZE::DescriptorType type = static_cast<cv::AKAZE::DescriptorType>(descriptor_type);
 
-AKAZE AKAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels,
-                             float threshold, int nOctaves, int nOctaveLayers, int diffusivity) {
-    return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create(descriptor_type, descriptor_size, descriptor_channels,
-                                                     threshold, nOctaves, nOctaveLayers, diffusivity));
+    return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create(type, descriptor_size, descriptor_channels));
 }
+
 
 void AKAZE_Close(AKAZE a) {
     delete a;
