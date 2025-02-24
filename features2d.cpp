@@ -76,12 +76,12 @@ AgastFeatureDetector AgastFeatureDetector_Create() {
     return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create());
 }
 
-AgastFeatureDetector AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type) {
-    // Convert the int type to the appropriate enum value
+cv::Ptr<cv::AgastFeatureDetector> AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type) {
     cv::AgastFeatureDetector::DetectorType detectorType = static_cast<cv::AgastFeatureDetector::DetectorType>(type);
 
     return cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, detectorType);
 }
+
 
 
 void AgastFeatureDetector_Close(AgastFeatureDetector a) {
