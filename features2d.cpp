@@ -213,11 +213,8 @@ KAZE KAZE_Create() {
     return new cv::Ptr<cv::KAZE>(cv::KAZE::create());
 }
 
-KAZE KAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels,
-                                         float threshold, int nOctaves, int nOctaveLayers, int diffusivity) {
-    cv::KAZE::DescriptorType type = static_cast<cv::KAZE::DescriptorType>(descriptor_type);
-
-    return new cv::Ptr<cv::KAZE>(cv::KAZE::create(type, descriptor_size, descriptor_channels, threshold, nOctaves, nOctaveLayers, static_cast<cv::KAZE::DiffusivityType>(diffusivity)));
+KAZE KAZE_CreateWithParams(bool extended, bool upright, float threshold, int nOctaves, int nOctaveLayers, int diffusivity) {
+    return new cv::Ptr<cv::KAZE>(cv::KAZE::create(extended, upright, threshold, nOctaves, nOctaveLayers, static_cast<cv::KAZE::DiffusivityType>(diffusivity)));
 }
 
 void KAZE_Close(KAZE a) {

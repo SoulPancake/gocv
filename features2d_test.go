@@ -333,46 +333,57 @@ func TestKAZE(t *testing.T) {
 }
 
 func TestKAZEWithParams(t *testing.T) {
+	// Load the image for testing
 	img := IMRead("images/face.jpg", IMReadColor)
 	if img.Empty() {
-		t.Error("Invalid Mat in KAZE test")
+		t.Error("Invalid Mat in KAZE With Params test")
 	}
 	defer img.Close()
 
+	// Create a destination matrix
 	dst := NewMat()
 	defer dst.Close()
 
-	// Initialize KAZE with custom parameters
-	k := NewKAZEWithParams(0, 3, 3, 0.001, 4, 4, 1)
+	// Set up the parameters for KAZE with the function NewKazeWithParams
+	extended := true
+	upright := false
+	threshold := 0.001
+	nOctaves := 4
+	nOctaveLayers := 4
+	diffusivity := 1 // Based on your input parameter options (e.g., 1 could be for `cv::KAZE::DIFF_PM_G2`)
+
+	// Create a KAZE object with the specified parameters
+	k := NewKazeWithParams(extended, upright, threshold, nOctaves, nOctaveLayers, diffusivity)
 	defer k.Close()
 
-	// Test Detect method
+	// Detect keypoints
 	kp := k.Detect(img)
 	if len(kp) < 512 {
-		t.Errorf("Invalid KeyPoint array in KAZE test with params: %d", len(kp))
+		t.Errorf("Invalid KeyPoint array in KAZE With Params test: %d", len(kp))
 	}
 
+	// Create a mask (optional)
 	mask := NewMat()
 	defer mask.Close()
 
-	// Test Compute method
+	// Compute descriptors for the keypoints
 	kpc, desc := k.Compute(img, mask, kp)
 	defer desc.Close()
 	if len(kpc) < 512 {
-		t.Errorf("Invalid KeyPoint array in KAZE Compute with params: %d", len(kpc))
+		t.Errorf("Invalid KeyPoint array in KAZE With Params Compute: %d", len(kpc))
 	}
 	if desc.Empty() {
-		t.Error("Invalid Mat desc in KAZE Compute with params")
+		t.Error("Invalid Mat desc in KAZE With Params Compute")
 	}
 
-	// Test DetectAndCompute method
+	// Perform DetectAndCompute
 	kpdc, desc2 := k.DetectAndCompute(img, mask)
 	defer desc2.Close()
 	if len(kpdc) < 512 {
-		t.Errorf("Invalid KeyPoint array in KAZE DetectAndCompute with params: %d", len(kpdc))
+		t.Errorf("Invalid KeyPoint array in KAZE With Params DetectAndCompute: %d", len(kpdc))
 	}
 	if desc2.Empty() {
-		t.Error("Invalid Mat desc in KAZE DetectAndCompute with params")
+		t.Error("Invalid Mat desc in KAZE With Params DetectAndCompute")
 	}
 }
 
