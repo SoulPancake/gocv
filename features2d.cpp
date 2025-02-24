@@ -617,7 +617,6 @@ void DrawKeyPoints(Mat src, struct KeyPoints kp, Mat dst, Scalar s, int flags) {
 }
 
 SIFT SIFT_Create() {
-    // TODO: params
     return new cv::Ptr<cv::SIFT>(cv::SIFT::create());
 }
 
