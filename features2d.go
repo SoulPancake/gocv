@@ -325,7 +325,7 @@ func NewGFTTDetectorWithParams(params GFTTDetectorParams) GFTTDetector {
 		useHarrisDetector: C.bool(params.UseHarrisDetector),
 		k:                 C.double(params.K),
 	}
-	return GFTTDetector{p: unsafe.Pointer(C.GFTTDetector_Create_WithParams(cParams))}
+	return GFTTDetector{p: unsafe.Pointer(C.GFTTDetector_Create_WithParams(&cParams))}
 }
 
 // Close GFTTDetector.
