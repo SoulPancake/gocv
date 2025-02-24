@@ -49,9 +49,10 @@ func NewAKAZE() AKAZE {
 
 // NewAKAZEWithParams creates a new AKAZE detector with custom parameters.
 func NewAKAZEWithParams(descriptorType, descriptorSize, descriptorChannels int, threshold float32, nOctaves, nOctaveLayers, diffusivity int) AKAZE {
-	return AKAZE{p: C.AKAZE_CreateWithParams(
+	ptr := C.AKAZE_CreateWithParams(
 		C.int(descriptorType), C.int(descriptorSize), C.int(descriptorChannels),
-		C.float(threshold), C.int(nOctaves), C.int(nOctaveLayers), C.int(diffusivity))}
+		C.float(threshold), C.int(nOctaves), C.int(nOctaveLayers), C.int(diffusivity))
+	return AKAZE{p: unsafe.Pointer(ptr)}
 }
 
 // Close AKAZE.
@@ -325,7 +326,7 @@ func NewGFTTDetectorWithParams(params GFTTDetectorParams) GFTTDetector {
 		useHarrisDetector: C.bool(params.UseHarrisDetector),
 		k:                 C.double(params.K),
 	}
-	return GFTTDetector{p: unsafe.Pointer(C.GFTTDetector_Create_WithParams(cParams))}
+	return GFTTDetector{p: unsafe.Pointer(C.GFTTDetector_Create_WithParams(&cParams))}
 }
 
 // Close GFTTDetector.
@@ -360,6 +361,18 @@ var _ Feature2D = (*KAZE)(nil)
 // https://docs.opencv.org/master/d3/d61/classcv_1_1KAZE.html
 func NewKAZE() KAZE {
 	return KAZE{p: unsafe.Pointer(C.KAZE_Create())}
+}
+
+// NewKazeWithParams returns a new KAZE algorithm with the specified parameters.
+func NewKazeWithParams(extended bool, upright bool, threshold float32, nOctaves int, nOctaveLayers int, diffusivity int) KAZE {
+	cExtended := C.bool(extended)
+	cUpright := C.bool(upright)
+	cThreshold := C.float(threshold)
+	cNOctaves := C.int(nOctaves)
+	cNOctaveLayers := C.int(nOctaveLayers)
+	cDiffusivity := C.int(diffusivity)
+
+	return KAZE{p: unsafe.Pointer(C.KAZE_CreateWithParams(cExtended, cUpright, cThreshold, cNOctaves, cNOctaveLayers, cDiffusivity))}
 }
 
 // Close KAZE.
@@ -431,6 +444,24 @@ type MSER struct {
 // https://docs.opencv.org/master/d3/d28/classcv_1_1MSER.html
 func NewMSER() MSER {
 	return MSER{p: unsafe.Pointer(C.MSER_Create())}
+}
+
+// NewMSERWithParams returns a new MSER algorithm with the specified parameters.
+func NewMSERWithParams(delta int, minArea int, maxArea int, maxVariation float64, minDiversity float64,
+	maxEvolution int, areaThreshold float64, minMargin float64, edgeBlurSize int) MSER {
+
+	cDelta := C.int(delta)
+	cMinArea := C.int(minArea)
+	cMaxArea := C.int(maxArea)
+	cMaxVariation := C.double(maxVariation)
+	cMinDiversity := C.double(minDiversity)
+	cMaxEvolution := C.int(maxEvolution)
+	cAreaThreshold := C.double(areaThreshold)
+	cMinMargin := C.double(minMargin)
+	cEdgeBlurSize := C.int(edgeBlurSize)
+
+	return MSER{p: unsafe.Pointer(C.MSER_CreateWithParams(cDelta, cMinArea, cMaxArea, cMaxVariation, cMinDiversity,
+		cMaxEvolution, cAreaThreshold, cMinMargin, cEdgeBlurSize))}
 }
 
 // Close MSER.

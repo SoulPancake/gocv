@@ -62,17 +62,21 @@ void FastFeatureDetector_Close(FastFeatureDetector f);
 struct KeyPoints FastFeatureDetector_Detect(FastFeatureDetector f, Mat src);
 
 GFTTDetector GFTTDetector_Create();
-GFTTDetector GFTTDetector_Create_WithParams(const struct GFTTDetectorParams& params);
+GFTTDetector GFTTDetector_Create_WithParams(const struct GFTTDetectorParams* params);
 void GFTTDetector_Close(GFTTDetector a);
 struct KeyPoints GFTTDetector_Detect(GFTTDetector a, Mat src);
 
 KAZE KAZE_Create();
+KAZE KAZE_CreateWithParams(bool extended, bool upright, float threshold, int nOctaves, int nOctaveLayers, int diffusivity);
+
 void KAZE_Close(KAZE a);
 struct KeyPoints KAZE_Detect(KAZE a, Mat src);
 struct KeyPoints KAZE_Compute(KAZE a, Mat src, struct KeyPoints kp, Mat desc);
 struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc);
 
 MSER MSER_Create();
+MSER MSER_CreateWithParams(int delta, int min_area, int max_area, double max_variation, double min_diversity,
+                 int max_evolution, double area_threshold, double min_margin, int edge_blur_size);
 void MSER_Close(MSER a);
 struct KeyPoints MSER_Detect(MSER a, Mat src);
 

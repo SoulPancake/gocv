@@ -3,12 +3,13 @@
 AKAZE AKAZE_Create() {
     return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create());
 }
-
 AKAZE AKAZE_CreateWithParams(int descriptor_type, int descriptor_size, int descriptor_channels,
                              float threshold, int nOctaves, int nOctaveLayers, int diffusivity) {
-    return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create(descriptor_type, descriptor_size, descriptor_channels,
-                                                     threshold, nOctaves, nOctaveLayers, diffusivity));
+    cv::AKAZE::DescriptorType type = static_cast<cv::AKAZE::DescriptorType>(descriptor_type);
+
+    return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create(type, descriptor_size, descriptor_channels,threshold, nOctaves, nOctaveLayers, static_cast<cv::KAZE::DiffusivityType>(diffusivity)));
 }
+
 
 void AKAZE_Close(AKAZE a) {
     delete a;
@@ -77,8 +78,12 @@ AgastFeatureDetector AgastFeatureDetector_Create() {
 }
 
 AgastFeatureDetector AgastFeatureDetector_CreateWithParams(int threshold, bool nonmaxSuppression, int type) {
-    return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, type));
+    cv::AgastFeatureDetector::DetectorType detectorType = static_cast<cv::AgastFeatureDetector::DetectorType>(type);
+    return new cv::Ptr<cv::AgastFeatureDetector>(cv::AgastFeatureDetector::create(threshold, nonmaxSuppression, detectorType));
 }
+
+
+
 
 void AgastFeatureDetector_Close(AgastFeatureDetector a) {
     delete a;
@@ -171,23 +176,17 @@ struct KeyPoints BRISK_DetectAndCompute(BRISK b, Mat src, Mat mask, Mat desc) {
     return ret;
 }
 
-struct GFTTDetectorParams {
-    int maxCorners;
-    double qualityLevel;
-    double minDistance;
-    int blockSize;
-    bool useHarrisDetector;
-    double k;
-};
-
 GFTTDetector GFTTDetector_Create() {
     return new cv::Ptr<cv::GFTTDetector>(cv::GFTTDetector::create());
 }
 
-GFTTDetector GFTTDetector_Create_WithParams(GFTTDetectorParams params) {
-    return cv::GFTTDetector::create(params.maxCorners, params.qualityLevel, params.minDistance,
-                                    params.blockSize, params.useHarrisDetector, params.k);
+GFTTDetector GFTTDetector_Create_WithParams(const GFTTDetectorParams* params) {
+    // Create the GFTTDetector and return it wrapped in a smart pointer
+    return new cv::Ptr<cv::GFTTDetector>(cv::GFTTDetector::create(params->maxCorners, params->qualityLevel, params->minDistance,
+                                                                 params->blockSize, params->useHarrisDetector, params->k));
 }
+
+
 
 void GFTTDetector_Close(GFTTDetector a) {
     delete a;
@@ -211,8 +210,11 @@ struct KeyPoints GFTTDetector_Detect(GFTTDetector a, Mat src) {
 }
 
 KAZE KAZE_Create() {
-    // TODO: params
     return new cv::Ptr<cv::KAZE>(cv::KAZE::create());
+}
+
+KAZE KAZE_CreateWithParams(bool extended, bool upright, float threshold, int nOctaves, int nOctaveLayers, int diffusivity) {
+    return new cv::Ptr<cv::KAZE>(cv::KAZE::create(extended, upright, threshold, nOctaves, nOctaveLayers, static_cast<cv::KAZE::DiffusivityType>(diffusivity)));
 }
 
 void KAZE_Close(KAZE a) {
@@ -278,8 +280,13 @@ struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc) {
 }
 
 MSER MSER_Create() {
-    // TODO: params
     return new cv::Ptr<cv::MSER>(cv::MSER::create());
+}
+
+MSER MSER_CreateWithParams(int delta, int min_area, int max_area, double max_variation, double min_diversity,
+                 int max_evolution, double area_threshold, double min_margin, int edge_blur_size) {
+    return new cv::Ptr<cv::MSER>(cv::MSER::create(delta, min_area, max_area, max_variation, min_diversity,
+                                                   max_evolution, area_threshold, min_margin, edge_blur_size));
 }
 
 void MSER_Close(MSER a) {
@@ -610,7 +617,6 @@ void DrawKeyPoints(Mat src, struct KeyPoints kp, Mat dst, Scalar s, int flags) {
 }
 
 SIFT SIFT_Create() {
-    // TODO: params
     return new cv::Ptr<cv::SIFT>(cv::SIFT::create());
 }
 
