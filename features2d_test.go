@@ -347,7 +347,7 @@ func TestKAZEWithParams(t *testing.T) {
 	// Set up the parameters for KAZE with the function NewKazeWithParams
 	extended := true
 	upright := false
-	threshold := 0.001
+	threshold := float32(0.001)
 	nOctaves := 4
 	nOctaveLayers := 4
 	diffusivity := 1 // Based on your input parameter options (e.g., 1 could be for `cv::KAZE::DIFF_PM_G2`)
