@@ -406,6 +406,35 @@ func TestMSER(t *testing.T) {
 	}
 }
 
+func TestMSERWithParams(t *testing.T) {
+	img := IMRead("images/face.jpg", IMReadColor)
+	if img.Empty() {
+		t.Error("Invalid Mat in MSER With Params test")
+	}
+	defer img.Close()
+
+	dst := NewMat()
+	defer dst.Close()
+
+	delta := 5
+	minArea := 60
+	maxArea := 14400
+	maxVariation := 0.25
+	minDiversity := 0.2
+	maxEvolution := 200
+	areaThreshold := 1.01
+	minMargin := 0.003
+	edgeBlurSize := 5
+
+	mser := NewMSERWithParams(delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize)
+	defer mser.Close()
+
+	regions := mser.Detect(img)
+	if len(regions) == 0 {
+		t.Errorf("Invalid region detection in MSER With Params test: %d", len(regions))
+	}
+}
+
 func TestORB(t *testing.T) {
 	img := IMRead("images/face.jpg", IMReadColor)
 	if img.Empty() {

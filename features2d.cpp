@@ -280,8 +280,13 @@ struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc) {
 }
 
 MSER MSER_Create() {
-    // TODO: params
     return new cv::Ptr<cv::MSER>(cv::MSER::create());
+}
+
+MSER MSER_Create(int delta, int min_area, int max_area, double max_variation, double min_diversity,
+                 int max_evolution, double area_threshold, double min_margin, int edge_blur_size) {
+    return new cv::Ptr<cv::MSER>(cv::MSER::create(delta, min_area, max_area, max_variation, min_diversity,
+                                                   max_evolution, area_threshold, min_margin, edge_blur_size));
 }
 
 void MSER_Close(MSER a) {

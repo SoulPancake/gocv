@@ -446,6 +446,24 @@ func NewMSER() MSER {
 	return MSER{p: unsafe.Pointer(C.MSER_Create())}
 }
 
+// NewMSERWithParams returns a new MSER algorithm with the specified parameters.
+func NewMSERWithParams(delta int, minArea int, maxArea int, maxVariation float64, minDiversity float64,
+	maxEvolution int, areaThreshold float64, minMargin float64, edgeBlurSize int) MSER {
+
+	cDelta := C.int(delta)
+	cMinArea := C.int(minArea)
+	cMaxArea := C.int(maxArea)
+	cMaxVariation := C.double(maxVariation)
+	cMinDiversity := C.double(minDiversity)
+	cMaxEvolution := C.int(maxEvolution)
+	cAreaThreshold := C.double(areaThreshold)
+	cMinMargin := C.double(minMargin)
+	cEdgeBlurSize := C.int(edgeBlurSize)
+
+	return MSER{p: unsafe.Pointer(C.MSER_Create(cDelta, cMinArea, cMaxArea, cMaxVariation, cMinDiversity,
+		cMaxEvolution, cAreaThreshold, cMinMargin, cEdgeBlurSize))}
+}
+
 // Close MSER.
 func (a *MSER) Close() error {
 	C.MSER_Close((C.MSER)(a.p))
