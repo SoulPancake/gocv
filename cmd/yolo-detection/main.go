@@ -20,6 +20,19 @@ import (
 	"gocv.io/x/gocv"
 )
 
+// COCONet class names
+var classes = []string{
+	"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
+	"traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse",
+	"sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie",
+	"suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove",
+	"skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon",
+	"bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut",
+	"cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "mouse",
+	"remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator", "book",
+	"clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush",
+}
+
 func main() {
 	if len(os.Args) < 3 {
 		fmt.Println("How to run:\nyolo-detection [videosource] [modelfile] ([backend] [device])")
@@ -83,6 +96,7 @@ func main() {
 		detect(&net, &img, outputNames)
 
 		window.IMShow(img)
+
 		if window.WaitKey(1) >= 0 {
 			break
 		}
@@ -144,10 +158,23 @@ func performDetection(outs []gocv.Mat) ([]image.Rectangle, []float32, []int) {
 	var confidences []float32
 	var boxes []image.Rectangle
 
-	// needed for yolov8
-	gocv.TransposeND(outs[0], []int{0, 2, 1}, &outs[0])
+	if len(outs) == 0 || outs[0].Empty() {
+		return boxes, confidences, classIds
+	}
+
+	// transpose outs[0] safely, don't overwrite it in-place without closing the old one to avoid memory leak
+	tmp := gocv.NewMat()
+	// needed for yolov8: transpose (1, 84, N) -> (1, N, 84)
+	gocv.TransposeND(outs[0], []int{0, 2, 1}, &tmp)
+
+	outs[0].Close() // free the old underlying cv::Mat
+	outs[0] = tmp   // take ownership of the new transposed Mat
 
 	for _, out := range outs {
+		if out.Empty() {
+			continue
+		}
+
 		out = out.Reshape(1, out.Size()[1])
 
 		for i := 0; i < out.Rows(); i++ {
@@ -157,11 +184,15 @@ func performDetection(outs []gocv.Mat) ([]image.Rectangle, []float32, []int) {
 			scores := scoresCol.ColRange(4, cols)
 			_, confidence, _, classIDPoint := gocv.MinMaxLoc(scores)
 
+			scores.Close()
+			scoresCol.Close()
+
 			if confidence > 0.5 {
-				centerX := out.GetFloatAt(i, cols)
-				centerY := out.GetFloatAt(i, cols+1)
-				width := out.GetFloatAt(i, cols+2)
-				height := out.GetFloatAt(i, cols+3)
+				// get cx,cy,w,h at columns 0..3
+				centerX := out.GetFloatAt(i, 0)
+				centerY := out.GetFloatAt(i, 1)
+				width := out.GetFloatAt(i, 2)
+				height := out.GetFloatAt(i, 3)
 
 				left := centerX - width/2
 				top := centerY - height/2
@@ -173,6 +204,8 @@ func performDetection(outs []gocv.Mat) ([]image.Rectangle, []float32, []int) {
 				boxes = append(boxes, image.Rect(int(left), int(top), int(right), int(bottom)))
 			}
 		}
+
+		out.Close()
 	}
 
 	return boxes, confidences, classIds
@@ -181,7 +214,8 @@ func performDetection(outs []gocv.Mat) ([]image.Rectangle, []float32, []int) {
 func drawRects(img *gocv.Mat, boxes []image.Rectangle, classes []string, classIds []int, indices []int) []string {
 	var detectClass []string
 	for _, idx := range indices {
-		if idx == 0 {
+		// Don't skip idx==0; it's a valid index from NMSBoxes
+		if idx < 0 || idx >= len(boxes) || idx >= len(classIds) {
 			continue
 		}
 		gocv.Rectangle(img, image.Rect(boxes[idx].Min.X, boxes[idx].Min.Y, boxes[idx].Max.X, boxes[idx].Max.Y), color.RGBA{0, 255, 0, 0}, 2)
